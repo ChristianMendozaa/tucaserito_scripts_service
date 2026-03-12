@@ -164,7 +164,7 @@ INSTRUCCIONES PARA EL JSON DE SALIDA:
 Reglas por campo:
 - `texto_locucion`: Recuerda interpretar "bs" siempre como "bolivianos".
 - `prompt_veo_visual`: Instrucción EN INGLÉS de cómo continúa la toma anterior (los siguientes 7 segundos). ADEMÁS, agrega explícitamente y en mayúsculas la regla: "DO NOT GENERATE ANY WRITTEN TEXT, NO WORDS, NO LETTERS". Es crucial que no aparezca texto flotante en el video.
-- `prompt_veo_audio`: Instrucción EN INGLÉS manteniendo el género musical pero evolucionando la mezcla. NO INCLUYAS EL DIÁLOGO AQUÍ. Solo describe música y efectos sonoros.
+- `prompt_veo_audio`: Instrucción EN INGLÉS describiendo el género musical y diseño sonoro, pero INCLUYENDO explícitamente el diálogo completo en español.
 '''
 
     text_prompt = f"""
