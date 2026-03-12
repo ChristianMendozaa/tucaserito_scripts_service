@@ -3,11 +3,11 @@ import anthropic
 from app.core.config import settings
 from app.models.schemas import ScriptRequest, ScriptResponse, ScriptExtensionRequest
 
-# Precios por millón de tokens (en USD)
-COSTO_INPUT_BASE_PER_1M = 3.00
-COSTO_CACHE_WRITE_PER_1M = 3.75
-COSTO_CACHE_HIT_PER_1M = 0.30
-COSTO_OUTPUT_PER_1M = 15.00
+# Precios por millón de tokens (en USD) para Claude Haiku 4.5
+COSTO_INPUT_BASE_PER_1M = 1.00
+COSTO_CACHE_WRITE_PER_1M = 1.25  # Usando 5m Cache Writes
+COSTO_CACHE_HIT_PER_1M = 0.10
+COSTO_OUTPUT_PER_1M = 5.00
 
 def calcular_costo(usage) -> float:
     # Extraer tokens del objeto usage de Anthropic
@@ -48,6 +48,11 @@ def generate_video_scripts(request_data: ScriptRequest, file_contents: list) -> 
  Tu tarea es generar un JSON estricto con exactamente 3 opciones de guiones de video publicitarios usando las estrategias AIDA, PAS y UGC.
 DEBES evitar obligatoriamente cualquier tema de copyright; si el producto o las preferencias piden algo sobre marcas registradas, personajes famosos o elementos con derechos de autor, tradúcelo inteligentemente a una "estética genérica".
 
+REGLA CRÍTICA DE SEGURIDAD (ANTIBLOQUEO VEO 3.1):
+El modelo generador de video (Vertex AI) cuenta con filtros de seguridad corporativos extremadamente estrictos. Recharazá la generación ante el mínimo indicio de: violencia, sangre, armas, contenido sugerente/desnudez explícita o implícita, procedimientos médicos, dolor, drogas, esquemas financieros riesgosos o bienes regulados.
+Tu tarea esencial es "SANITIZAR" los prompts visuales (`prompt_veo_visual`).
+NUNCA redactes escenas que interactúen físicamente con cuerpos humanos de forma clínica, riesgosa o sugerente. SI EL PRODUCTO PERTENECE A UNA CATEGORÍA SENSIBLE (ej: insumos médicos, suplementos, herramientas peligrosas, lencería, etc.), traduce la toma visual a metáforas 100% inofensivas y "brand-safe" (ejemplos: "una caja brillante sobre un escritorio moderno", "gráficos abstractos en movimiento", "personas sonriendo en un parque", "estética clean y profesional"). El prompt de audio/locución puede hablar del producto promocionando sus beneficios, pero el video (visual) debe ser abstracto y seguro para evitar filtros.
+
 CRÍTICO - RESTRICCIÓN FÍSICA DE TIEMPO (8 SEGUNDOS MAX):
 El video generado durará EXACTAMENTE y MÁXIMO 8 SEGUNDOS.
 Tu `texto_locucion` DEBE durar 8 segundos al hablarse (aproximadamente de 15 a un MÁXIMO ABSOLUTO de 20 palabras). Si superas las 20 palabras, el audio se cortará abruptamente. Sé conciso y al grano. El `prompt_veo_visual` debe representar una sola toma unificada fluida que no dure más de 8s.
@@ -69,24 +74,13 @@ Debes regresar OBLIGATORIAMENTE un JSON que cumpla estrictamente con esta estruc
 
 Reglas por campo:
 - `texto_locucion`: Usa jerga boliviana natural y persuasiva acorde al producto (ej: "caserito"). PROHIBIDO usar modismos peruanos como "pe", "causa" o "chamba". Si el usuario menciona "bs", "Bs" o "bs.", significa OBLIGATORIAMENTE la moneda "bolivianos", escríbelo para que suene fluido (Ej: "a sólo 20 bolivianos"). ¡MÁXIMO 20 PALABRAS! Si pasas de 20, fracasaremos.
-- `prompt_veo_visual`: Instrucción EN INGLÉS detallando la cámara, cinematografía y acción visual para un modelo generador de video (para 8 segundos de toma).
+- `prompt_veo_visual`: Instrucción EN INGLÉS detallando la cámara, cinematografía y acción visual para un modelo generador de video (para 8 segundos de toma). ADEMÁS, agrega explícitamente y en mayúsculas la regla: "DO NOT GENERATE ANY WRITTEN TEXT, NO WORDS, NO LETTERS". Es crucial que no aparezca texto flotante en el video.
 - `prompt_veo_audio`: Instrucción EN INGLÉS describiendo el género musical y diseño sonoro, pero INCLUYENDO explícitamente el diálogo completo en español.
 '''
 
     content = []
     
-    text_prompt = f"""
-Producto: {request_data.product_name}
-Descripción: {request_data.product_description}
-Aspect Ratio: {request_data.technical_settings.aspect_ratio}
-
-Preferencias (si dice "auto", decide por tu cuenta qué sería mejor):
-- Estilo de video: {request_data.preferences.video_style}
-- Género musical: {request_data.preferences.music_genre}
-- Tema personalizado: {request_data.preferences.custom_theme}
-"""
-    content.append({"type": "text", "text": text_prompt})
-    
+    # Agregar las imágenes PRIMERO para mejor rendimiento de visión de Claude
     for file_obj in file_contents:
         media_type = file_obj.get("content_type", "image/jpeg")
         data_bytes = file_obj.get("content", b"")
@@ -100,6 +94,19 @@ Preferencias (si dice "auto", decide por tu cuenta qué sería mejor):
                 "data": b64_encoded
             }
         })
+    
+    # Agregar el texto DESPUÉS de las imágenes
+    text_prompt = f"""
+Producto: {request_data.product_name}
+Descripción: {request_data.product_description}
+Aspect Ratio: {request_data.technical_settings.aspect_ratio}
+
+Preferencias (si dice "auto", decide por tu cuenta qué sería mejor):
+- Estilo de video: {request_data.preferences.video_style}
+- Género musical: {request_data.preferences.music_genre}
+- Tema personalizado: {request_data.preferences.custom_theme}
+"""
+    content.append({"type": "text", "text": text_prompt})
 
     # Llamar a Claude
     # Se usa la versión más reciente de Claude 3.5 Sonnet
@@ -140,6 +147,10 @@ def generate_extension_scripts(request_data: ScriptExtensionRequest) -> ScriptRe
 Tu cliente ha generado un video inicial exitoso y ha solicitado una "EXTENSIÓN" de dicho video.
 A diferencia del video inicial que duró 8 segundos, el modelo generador (Veo) tiene un límite rígido de EXACTAMENTE 7 SEGUNDOS físicos para el video de continuación.
 
+REGLA CRÍTICA DE SEGURIDAD (ANTIBLOQUEO VEO 3.1):
+El modelo generador de video (Vertex AI) cuenta con filtros de seguridad extremadamente estrictos (bloquea violencia, armas, procedimientos médicos, desnudez/contenido sugerente, drogas, y bienes regulados).
+DEBES "SANITIZAR" el `prompt_veo_visual`. Si el producto entra en cualquier categoría remotamente sensible, no lo muestres en uso real ni interactuando con piel humana. Describe siempre tomas de estilo de vida muy seguro, cajas cerradas, bodegones estéticos (still life) o bien animaciones abstractas de alta tecnología.
+
 CRÍTICO - RESTRICCIÓN DE TIEMPO EXTENSIÓN (7 SEGUNDOS):
 Tu tarea es generar un JSON con 3 opciones de guiones que continúen coherentemente la historia/acción del video anterior aportando un Cierre y Call to Action (CTA).
 Tu nuevo `texto_locucion` DEBE durar 7 segundos al hablarse (MÁXIMO ABSOLUTO 17 palabras). Si superas las 17 palabras, romperemos el audio final.
@@ -161,7 +172,7 @@ INSTRUCCIONES PARA EL JSON DE SALIDA:
 
 Reglas por campo:
 - `texto_locucion`: Recuerda interpretar "bs" siempre como "bolivianos".
-- `prompt_veo_visual`: Instrucción EN INGLÉS de cómo continúa la toma anterior (los siguientes 7 segundos).
+- `prompt_veo_visual`: Instrucción EN INGLÉS de cómo continúa la toma anterior (los siguientes 7 segundos). ADEMÁS, agrega explícitamente y en mayúsculas la regla: "DO NOT GENERATE ANY WRITTEN TEXT, NO WORDS, NO LETTERS". Es crucial que no aparezca texto flotante en el video.
 - `prompt_veo_audio`: Instrucción EN INGLÉS manteniendo el género musical pero evolucionando la mezcla, e INCLUYENDO explícitamente el diálogo en español nuevo.
 '''
 
