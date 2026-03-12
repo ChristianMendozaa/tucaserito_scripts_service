@@ -68,7 +68,7 @@ Debes regresar OBLIGATORIAMENTE un JSON que cumpla estrictamente con esta estruc
 }
 
 Reglas por campo:
-- `texto_locucion`: Usa jerga boliviana natural y persuasiva acorde al producto (ej: "caserito", "changos", "chala", "yapa"). PROHIBIDO usar modismos peruanos como "pe", "causa" o "chamba". Si el usuario menciona "bs", "Bs" o "bs.", significa OBLIGATORIAMENTE la moneda "bolivianos", escríbelo para que suene fluido (Ej: "a sólo 20 bolivianos"). ¡MÁXIMO 20 PALABRAS! Si pasas de 20, fracasaremos.
+- `texto_locucion`: Usa jerga boliviana natural y persuasiva acorde al producto (ej: "caserito"). PROHIBIDO usar modismos peruanos como "pe", "causa" o "chamba". Si el usuario menciona "bs", "Bs" o "bs.", significa OBLIGATORIAMENTE la moneda "bolivianos", escríbelo para que suene fluido (Ej: "a sólo 20 bolivianos"). ¡MÁXIMO 20 PALABRAS! Si pasas de 20, fracasaremos.
 - `prompt_veo_visual`: Instrucción EN INGLÉS detallando la cámara, cinematografía y acción visual para un modelo generador de video (para 8 segundos de toma).
 - `prompt_veo_audio`: Instrucción EN INGLÉS describiendo el género musical y diseño sonoro, pero INCLUYENDO explícitamente el diálogo completo en español.
 '''
@@ -104,7 +104,7 @@ Preferencias (si dice "auto", decide por tu cuenta qué sería mejor):
     # Llamar a Claude
     # Se usa la versión más reciente de Claude 3.5 Sonnet
     response = client.messages.create(
-        model="claude-sonnet-4-6",
+        model="claude-haiku-4-5-20251001",
         max_tokens=4096,
         temperature=0.7,
         system=system_prompt,
@@ -160,7 +160,7 @@ INSTRUCCIONES PARA EL JSON DE SALIDA:
 }
 
 Reglas por campo:
-- `texto_locucion`: Locución de continuación con jerga boliviana (ej: "caserito"). PROHIBIDO usar términos peruanos como "pe" o "causa". Recuerda interpretar "bs" siempre como "bolivianos". ¡MÁXIMO 17 PALABRAS!
+- `texto_locucion`: Recuerda interpretar "bs" siempre como "bolivianos".
 - `prompt_veo_visual`: Instrucción EN INGLÉS de cómo continúa la toma anterior (los siguientes 7 segundos).
 - `prompt_veo_audio`: Instrucción EN INGLÉS manteniendo el género musical pero evolucionando la mezcla, e INCLUYENDO explícitamente el diálogo en español nuevo.
 '''
@@ -188,7 +188,7 @@ Genera las 3 opciones (formato JSON) que continúan esta misma historia durante 
 """
 
     response = client.messages.create(
-        model="claude-sonnet-4-6",
+        model="claude-haiku-4-5-20251001",
         max_tokens=2048,
         temperature=0.7,
         system=system_prompt,
