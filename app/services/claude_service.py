@@ -70,7 +70,7 @@ Debes regresar OBLIGATORIAMENTE un JSON que cumpla estrictamente con esta estruc
 Reglas por campo:
 - `texto_locucion`: Usa jerga boliviana natural y persuasiva acorde al producto (ej: "caserito"). PROHIBIDO usar modismos peruanos como "pe", "causa" o "chamba". Si el usuario menciona "bs", "Bs" o "bs.", significa OBLIGATORIAMENTE la moneda "bolivianos", escríbelo para que suene fluido (Ej: "a sólo 20 bolivianos"). ¡MÁXIMO 20 PALABRAS! Si pasas de 20, fracasaremos.
 - `prompt_veo_visual`: Instrucción EN INGLÉS detallando la cámara, cinematografía y acción visual para un modelo generador de video (para 8 segundos de toma). ADEMÁS, agrega explícitamente y en mayúsculas la regla: "DO NOT GENERATE ANY WRITTEN TEXT, NO WORDS, NO LETTERS". Es crucial que no aparezca texto flotante en el video.
-- `prompt_veo_audio`: Instrucción EN INGLÉS describiendo el género musical y diseño sonoro. NO INCLUYAS EL DIÁLOGO AQUÍ, VEO NO PROCESA LA VOZ. Solo describe la música y los efectos (ej: "Upbeat electronic music, gentle swoosh sound").
+- `prompt_veo_audio`: Instrucción EN INGLÉS describiendo el género musical y diseño sonoro, pero INCLUYENDO explícitamente el diálogo completo en español.
 '''
 
     content = []
