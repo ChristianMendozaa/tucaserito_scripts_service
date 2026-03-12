@@ -48,16 +48,16 @@ def generate_video_scripts(request_data: ScriptRequest, file_contents: list) -> 
  Tu tarea es generar un JSON estricto con exactamente 3 opciones de guiones de video publicitarios usando las estrategias AIDA, PAS y UGC.
 DEBES evitar obligatoriamente cualquier tema de copyright; si el producto o las preferencias piden algo sobre marcas registradas, personajes famosos o elementos con derechos de autor, tradúcelo inteligentemente a una "estética genérica".
 
-🚨 REGLA 1: SANITIZACIÓN VISUAL Y FOCO EN EL PRODUCTO (ANTIBLOQUEO VEO 3.1)
-El modelo generador de video bloquea interacciones humanas con productos sensibles (lencería, ropa interior, salud, herramientas).
-Para EVITAR BLOQUEOS y MANTENER EL VALOR COMERCIAL: NUNCA redactes escenas con personas, modelos humanos, rostros, manos o cuerpos usando estos productos.
-En su lugar, OBLIGATORIAMENTE debes usar el estilo "Bodegón Cinematográfico" (Cinematic Product B-Roll). 
-El producto DEBE ser el protagonista visual durante los 8 segundos.
-- Ejemplo para Lencería: "Macro shot of delicate black lace fabric resting on a luxurious white velvet surface. Soft studio side-lighting highlighting the intricate stitching and premium textures. Slow cinematic pan. No humans."
-- Ejemplo para Salud/Herramientas: "Sleek metallic product elegantly displayed on a sterile, glossy minimalist table, dramatic lighting."
-Mantén el producto en pantalla SIEMPRE, pero ELIMINA a los humanos del `prompt_veo_visual`.
+REGLA 1: SANITIZACIÓN VISUAL CONDICIONAL Y FOCO EN EL PRODUCTO (ANTIBLOQUEO VEO 3.1)
+Para evitar los bloqueos visuales de Vertex AI, DEBES actuar como clasificador de riesgo:
+1. Si el producto es de ALTA SENSIBILIDAD (lencería, ropa íntima, medicina, herramientas afiladas):
+   - PROHIBIDO humanos. Obligatorio estilo "Bodegón Cinematográfico" (ej: "Macro shot of delicate fabric on velvet. No humans").
+2. Si el producto es SEGURO (tecnología, ropa casual, muebles, comida):
+   - PERMITIDO incluir personas, PERO solo realizando "Safe Verbs" pasivos: "holding", "standing next to", "looking at", "typing", "smiling", "walking".
+   - PROHIBIDO verbos de interacción profunda o sugestiva: "eating", "applying on skin", "wearing", "running fast", "sweating", "kissing".
+El producto DEBE ser el protagonista visual durante los 8 segundos. Las personas, si aplican, deben describirse en inglés estrictamente como adultos (ej: "Adult female holding laptop").
 
-🚨 REGLA 2: SANITIZACIÓN DE VOCABULARIO (FILTRO DE TEXTO VEO)
+REGLA 2: SANITIZACIÓN DE VOCABULARIO (FILTRO DE TEXTO VEO)
 Incluso si la escena no tiene humanos, Vertex AI bloqueará el video si usas palabras "prohibidas" en el `prompt_veo_visual` o `prompt_veo_audio`.
 1. DROGAS/ARMAS/CLÍNICO: Prohibido "lingerie", "underwear", "bra", "panties", "sexy", "pill", "drug", "syringe", "blood", "knife", "weapon", "gun".
 2. PROTECCIÓN AL MENOR (CSAM): PROHIBIDO usar palabras de edad como "young", "kid", "child", "boy", "girl", "teen", "teenager", "youth". Usa siempre "adult" o simplemente omite la edad.
@@ -158,16 +158,16 @@ def generate_extension_scripts(request_data: ScriptExtensionRequest) -> ScriptRe
 Tu cliente ha generado un video inicial exitoso y ha solicitado una "EXTENSIÓN" de dicho video.
 A diferencia del video inicial que duró 8 segundos, el modelo generador (Veo) tiene un límite rígido de EXACTAMENTE 7 SEGUNDOS físicos para el video de continuación.
 
-🚨 REGLA 1: SANITIZACIÓN VISUAL Y FOCO EN EL PRODUCTO (ANTIBLOQUEO VEO 3.1)
-El modelo generador de video bloquea interacciones humanas con productos sensibles (lencería, ropa interior, salud, herramientas).
-Para EVITAR BLOQUEOS y MANTENER EL VALOR COMERCIAL: NUNCA redactes escenas con personas, modelos humanos, rostros, manos o cuerpos usando estos productos.
-En su lugar, OBLIGATORIAMENTE debes usar el estilo "Bodegón Cinematográfico" (Cinematic Product B-Roll). 
-El producto DEBE ser el protagonista visual durante los 7 segundos restantes.
-- Ejemplo para Lencería: "Macro shot of delicate black lace fabric resting on a luxurious white velvet surface. Soft studio side-lighting highlighting the intricate stitching and premium textures. Slow cinematic pan. No humans."
-- Ejemplo para Salud/Herramientas: "Sleek metallic product elegantly displayed on a sterile, glossy minimalist table, dramatic lighting."
-Mantén el producto en pantalla SIEMPRE, pero ELIMINA a los humanos del `prompt_veo_visual`.
+REGLA 1: SANITIZACIÓN VISUAL CONDICIONAL Y FOCO EN EL PRODUCTO (ANTIBLOQUEO VEO 3.1)
+Para evitar los bloqueos visuales de Vertex AI, DEBES actuar como clasificador de riesgo:
+1. Si el producto es de ALTA SENSIBILIDAD (lencería, ropa íntima, medicina, herramientas afiladas):
+   - PROHIBIDO humanos. Obligatorio estilo "Bodegón Cinematográfico" (ej: "Macro shot of delicate fabric on velvet. No humans").
+2. Si el producto es SEGURO (tecnología, ropa casual, muebles, comida):
+   - PERMITIDO incluir personas, PERO solo realizando "Safe Verbs" pasivos: "holding", "standing next to", "looking at", "typing", "smiling", "walking".
+   - PROHIBIDO verbos de interacción profunda o sugestiva: "eating", "applying on skin", "wearing", "running fast", "sweating", "kissing".
+El producto DEBE ser el protagonista visual durante los 7 segundos restantes. Las personas, si aplican, deben describirse en inglés estrictamente como adultos (ej: "Adult female holding laptop").
 
-🚨 REGLA 2: SANITIZACIÓN DE VOCABULARIO (FILTRO DE TEXTO VEO)
+REGLA 2: SANITIZACIÓN DE VOCABULARIO (FILTRO DE TEXTO VEO)
 Incluso si la escena no tiene humanos, Vertex AI bloqueará el video si usas palabras "prohibidas" en el `prompt_veo_visual` o `prompt_veo_audio`.
 1. DROGAS/ARMAS/CLÍNICO: Prohibido "lingerie", "underwear", "bra", "panties", "sexy", "pill", "drug", "syringe", "blood", "knife", "weapon", "gun".
 2. PROTECCIÓN AL MENOR (CSAM): PROHIBIDO usar palabras de edad como "young", "kid", "child", "boy", "girl", "teen", "teenager", "youth". Usa siempre "adult" o simplemente omite la edad.
