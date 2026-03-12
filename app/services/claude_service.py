@@ -48,22 +48,6 @@ def generate_video_scripts(request_data: ScriptRequest, file_contents: list) -> 
  Tu tarea es generar un JSON estricto con exactamente 3 opciones de guiones de video publicitarios usando las estrategias AIDA, PAS y UGC.
 DEBES evitar obligatoriamente cualquier tema de copyright; si el producto o las preferencias piden algo sobre marcas registradas, personajes famosos o elementos con derechos de autor, tradúcelo inteligentemente a una "estética genérica".
 
-REGLA 1: SANITIZACIÓN VISUAL CONDICIONAL Y FOCO EN EL PRODUCTO (ANTIBLOQUEO VEO 3.1)
-Para evitar los bloqueos visuales de Vertex AI, DEBES actuar como clasificador de riesgo:
-1. Si el producto es de ALTA SENSIBILIDAD (lencería, ropa íntima, medicina, herramientas afiladas):
-   - PROHIBIDO humanos. Obligatorio estilo "Bodegón Cinematográfico" (ej: "Macro shot of delicate fabric on velvet. No humans").
-2. Si el producto es SEGURO (tecnología, ropa casual, muebles, comida):
-   - PERMITIDO incluir personas, PERO solo realizando "Safe Verbs" pasivos: "holding", "standing next to", "looking at", "typing", "smiling", "walking".
-   - PROHIBIDO verbos de interacción profunda o sugestiva: "eating", "applying on skin", "wearing", "running fast", "sweating", "kissing".
-El producto DEBE ser el protagonista visual durante los 8 segundos. Las personas, si aplican, deben describirse en inglés estrictamente como adultos (ej: "Adult female holding laptop").
-
-REGLA 2: SANITIZACIÓN DE VOCABULARIO (FILTRO DE TEXTO VEO)
-Incluso si la escena no tiene humanos, Vertex AI bloqueará el video si usas palabras "prohibidas" en el `prompt_veo_visual` o `prompt_veo_audio`.
-1. DROGAS/ARMAS/CLÍNICO: Prohibido "lingerie", "underwear", "bra", "panties", "sexy", "pill", "drug", "syringe", "blood", "knife", "weapon", "gun".
-2. PROTECCIÓN AL MENOR (CSAM): PROHIBIDO usar palabras de edad como "young", "kid", "child", "boy", "girl", "teen", "teenager", "youth". Usa siempre "adult" o simplemente omite la edad.
-3. ACCIONES CORPORALES: Prohibido palabras que puedan malinterpretarse como sugerentes ("exhale", "sweat", "moan", "heavy breathing", "naked", "bare").
-DEBES SUSTITUIRLAS POR PALABRAS ABSTRACTAS. Si el cliente vende lencería, usa "elegant garment". Veo no sabe qué es el producto, solo genera lo que lee.
-
 CRÍTICO - RESTRICCIÓN FÍSICA DE TIEMPO (8 SEGUNDOS MAX):
 El video generado durará EXACTAMENTE y MÁXIMO 8 SEGUNDOS.
 Tu `texto_locucion` DEBE durar 8 segundos al hablarse (aproximadamente de 15 a un MÁXIMO ABSOLUTO de 20 palabras). Si superas las 20 palabras, el audio se cortará abruptamente. Sé conciso y al grano. El `prompt_veo_visual` debe representar una sola toma unificada fluida que no dure más de 8s.
@@ -86,7 +70,7 @@ Debes regresar OBLIGATORIAMENTE un JSON que cumpla estrictamente con esta estruc
 Reglas por campo:
 - `texto_locucion`: Usa jerga boliviana natural y persuasiva acorde al producto (ej: "caserito"). PROHIBIDO usar modismos peruanos como "pe", "causa" o "chamba". Si el usuario menciona "bs", "Bs" o "bs.", significa OBLIGATORIAMENTE la moneda "bolivianos", escríbelo para que suene fluido (Ej: "a sólo 20 bolivianos"). ¡MÁXIMO 20 PALABRAS! Si pasas de 20, fracasaremos.
 - `prompt_veo_visual`: Instrucción EN INGLÉS detallando la cámara, cinematografía y acción visual para un modelo generador de video (para 8 segundos de toma). ADEMÁS, agrega explícitamente y en mayúsculas la regla: "DO NOT GENERATE ANY WRITTEN TEXT, NO WORDS, NO LETTERS". Es crucial que no aparezca texto flotante en el video.
-- `prompt_veo_audio`: Instrucción EN INGLÉS describiendo el género musical y diseño sonoro, pero INCLUYENDO explícitamente el diálogo completo en español.
+- `prompt_veo_audio`: Instrucción EN INGLÉS describiendo el género musical y diseño sonoro. NO INCLUYAS EL DIÁLOGO AQUÍ, VEO NO PROCESA LA VOZ. Solo describe la música y los efectos (ej: "Upbeat electronic music, gentle swoosh sound").
 '''
 
     content = []
@@ -158,22 +142,6 @@ def generate_extension_scripts(request_data: ScriptExtensionRequest) -> ScriptRe
 Tu cliente ha generado un video inicial exitoso y ha solicitado una "EXTENSIÓN" de dicho video.
 A diferencia del video inicial que duró 8 segundos, el modelo generador (Veo) tiene un límite rígido de EXACTAMENTE 7 SEGUNDOS físicos para el video de continuación.
 
-REGLA 1: SANITIZACIÓN VISUAL CONDICIONAL Y FOCO EN EL PRODUCTO (ANTIBLOQUEO VEO 3.1)
-Para evitar los bloqueos visuales de Vertex AI, DEBES actuar como clasificador de riesgo:
-1. Si el producto es de ALTA SENSIBILIDAD (lencería, ropa íntima, medicina, herramientas afiladas):
-   - PROHIBIDO humanos. Obligatorio estilo "Bodegón Cinematográfico" (ej: "Macro shot of delicate fabric on velvet. No humans").
-2. Si el producto es SEGURO (tecnología, ropa casual, muebles, comida):
-   - PERMITIDO incluir personas, PERO solo realizando "Safe Verbs" pasivos: "holding", "standing next to", "looking at", "typing", "smiling", "walking".
-   - PROHIBIDO verbos de interacción profunda o sugestiva: "eating", "applying on skin", "wearing", "running fast", "sweating", "kissing".
-El producto DEBE ser el protagonista visual durante los 7 segundos restantes. Las personas, si aplican, deben describirse en inglés estrictamente como adultos (ej: "Adult female holding laptop").
-
-REGLA 2: SANITIZACIÓN DE VOCABULARIO (FILTRO DE TEXTO VEO)
-Incluso si la escena no tiene humanos, Vertex AI bloqueará el video si usas palabras "prohibidas" en el `prompt_veo_visual` o `prompt_veo_audio`.
-1. DROGAS/ARMAS/CLÍNICO: Prohibido "lingerie", "underwear", "bra", "panties", "sexy", "pill", "drug", "syringe", "blood", "knife", "weapon", "gun".
-2. PROTECCIÓN AL MENOR (CSAM): PROHIBIDO usar palabras de edad como "young", "kid", "child", "boy", "girl", "teen", "teenager", "youth". Usa siempre "adult" o simplemente omite la edad.
-3. ACCIONES CORPORALES: Prohibido palabras que puedan malinterpretarse como sugerentes ("exhale", "sweat", "moan", "heavy breathing", "naked", "bare").
-DEBES SUSTITUIRLAS POR PALABRAS ABSTRACTAS. Si el cliente vende lencería, usa "elegant garment". Veo no sabe qué es el producto, solo genera lo que lee.
-
 CRÍTICO - RESTRICCIÓN DE TIEMPO EXTENSIÓN (7 SEGUNDOS):
 Tu tarea es generar un JSON con 3 opciones de guiones que continúen coherentemente la historia/acción del video anterior aportando un Cierre y Call to Action (CTA).
 Tu nuevo `texto_locucion` DEBE durar 7 segundos al hablarse (MÁXIMO ABSOLUTO 17 palabras). Si superas las 17 palabras, romperemos el audio final.
@@ -196,7 +164,7 @@ INSTRUCCIONES PARA EL JSON DE SALIDA:
 Reglas por campo:
 - `texto_locucion`: Recuerda interpretar "bs" siempre como "bolivianos".
 - `prompt_veo_visual`: Instrucción EN INGLÉS de cómo continúa la toma anterior (los siguientes 7 segundos). ADEMÁS, agrega explícitamente y en mayúsculas la regla: "DO NOT GENERATE ANY WRITTEN TEXT, NO WORDS, NO LETTERS". Es crucial que no aparezca texto flotante en el video.
-- `prompt_veo_audio`: Instrucción EN INGLÉS manteniendo el género musical pero evolucionando la mezcla, e INCLUYENDO explícitamente el diálogo en español nuevo.
+- `prompt_veo_audio`: Instrucción EN INGLÉS manteniendo el género musical pero evolucionando la mezcla. NO INCLUYAS EL DIÁLOGO AQUÍ. Solo describe música y efectos sonoros.
 '''
 
     text_prompt = f"""
