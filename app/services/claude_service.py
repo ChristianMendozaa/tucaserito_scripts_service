@@ -48,10 +48,21 @@ def generate_video_scripts(request_data: ScriptRequest, file_contents: list) -> 
  Tu tarea es generar un JSON estricto con exactamente 3 opciones de guiones de video publicitarios usando las estrategias AIDA, PAS y UGC.
 DEBES evitar obligatoriamente cualquier tema de copyright; si el producto o las preferencias piden algo sobre marcas registradas, personajes famosos o elementos con derechos de autor, tradúcelo inteligentemente a una "estética genérica".
 
-REGLA CRÍTICA DE SEGURIDAD (ANTIBLOQUEO VEO 3.1):
-El modelo generador de video (Vertex AI) cuenta con filtros de seguridad corporativos extremadamente estrictos. Recharazá la generación ante el mínimo indicio de: violencia, sangre, armas, contenido sugerente/desnudez explícita o implícita, procedimientos médicos, dolor, drogas, esquemas financieros riesgosos o bienes regulados.
-Tu tarea esencial es "SANITIZAR" los prompts visuales (`prompt_veo_visual`).
-NUNCA redactes escenas que interactúen físicamente con cuerpos humanos de forma clínica, riesgosa o sugerente. SI EL PRODUCTO PERTENECE A UNA CATEGORÍA SENSIBLE (ej: insumos médicos, suplementos, herramientas peligrosas, lencería, etc.), traduce la toma visual a metáforas 100% inofensivas y "brand-safe" (ejemplos: "una caja brillante sobre un escritorio moderno", "gráficos abstractos en movimiento", "personas sonriendo en un parque", "estética clean y profesional"). El prompt de audio/locución puede hablar del producto promocionando sus beneficios, pero el video (visual) debe ser abstracto y seguro para evitar filtros.
+🚨 REGLA 1: SANITIZACIÓN VISUAL Y FOCO EN EL PRODUCTO (ANTIBLOQUEO VEO 3.1)
+El modelo generador de video bloquea interacciones humanas con productos sensibles (lencería, ropa interior, salud, herramientas).
+Para EVITAR BLOQUEOS y MANTENER EL VALOR COMERCIAL: NUNCA redactes escenas con personas, modelos humanos, rostros, manos o cuerpos usando estos productos.
+En su lugar, OBLIGATORIAMENTE debes usar el estilo "Bodegón Cinematográfico" (Cinematic Product B-Roll). 
+El producto DEBE ser el protagonista visual durante los 8 segundos.
+- Ejemplo para Lencería: "Macro shot of delicate black lace fabric resting on a luxurious white velvet surface. Soft studio side-lighting highlighting the intricate stitching and premium textures. Slow cinematic pan. No humans."
+- Ejemplo para Salud/Herramientas: "Sleek metallic product elegantly displayed on a sterile, glossy minimalist table, dramatic lighting."
+Mantén el producto en pantalla SIEMPRE, pero ELIMINA a los humanos del `prompt_veo_visual`.
+
+🚨 REGLA 2: SANITIZACIÓN DE VOCABULARIO (FILTRO DE TEXTO VEO)
+Incluso si la escena no tiene humanos, Vertex AI bloqueará el video si usas palabras "prohibidas" en el `prompt_veo_visual` o `prompt_veo_audio`.
+1. DROGAS/ARMAS/CLÍNICO: Prohibido "lingerie", "underwear", "bra", "panties", "sexy", "pill", "drug", "syringe", "blood", "knife", "weapon", "gun".
+2. PROTECCIÓN AL MENOR (CSAM): PROHIBIDO usar palabras de edad como "young", "kid", "child", "boy", "girl", "teen", "teenager", "youth". Usa siempre "adult" o simplemente omite la edad.
+3. ACCIONES CORPORALES: Prohibido palabras que puedan malinterpretarse como sugerentes ("exhale", "sweat", "moan", "heavy breathing", "naked", "bare").
+DEBES SUSTITUIRLAS POR PALABRAS ABSTRACTAS. Si el cliente vende lencería, usa "elegant garment". Veo no sabe qué es el producto, solo genera lo que lee.
 
 CRÍTICO - RESTRICCIÓN FÍSICA DE TIEMPO (8 SEGUNDOS MAX):
 El video generado durará EXACTAMENTE y MÁXIMO 8 SEGUNDOS.
@@ -147,9 +158,21 @@ def generate_extension_scripts(request_data: ScriptExtensionRequest) -> ScriptRe
 Tu cliente ha generado un video inicial exitoso y ha solicitado una "EXTENSIÓN" de dicho video.
 A diferencia del video inicial que duró 8 segundos, el modelo generador (Veo) tiene un límite rígido de EXACTAMENTE 7 SEGUNDOS físicos para el video de continuación.
 
-REGLA CRÍTICA DE SEGURIDAD (ANTIBLOQUEO VEO 3.1):
-El modelo generador de video (Vertex AI) cuenta con filtros de seguridad extremadamente estrictos (bloquea violencia, armas, procedimientos médicos, desnudez/contenido sugerente, drogas, y bienes regulados).
-DEBES "SANITIZAR" el `prompt_veo_visual`. Si el producto entra en cualquier categoría remotamente sensible, no lo muestres en uso real ni interactuando con piel humana. Describe siempre tomas de estilo de vida muy seguro, cajas cerradas, bodegones estéticos (still life) o bien animaciones abstractas de alta tecnología.
+🚨 REGLA 1: SANITIZACIÓN VISUAL Y FOCO EN EL PRODUCTO (ANTIBLOQUEO VEO 3.1)
+El modelo generador de video bloquea interacciones humanas con productos sensibles (lencería, ropa interior, salud, herramientas).
+Para EVITAR BLOQUEOS y MANTENER EL VALOR COMERCIAL: NUNCA redactes escenas con personas, modelos humanos, rostros, manos o cuerpos usando estos productos.
+En su lugar, OBLIGATORIAMENTE debes usar el estilo "Bodegón Cinematográfico" (Cinematic Product B-Roll). 
+El producto DEBE ser el protagonista visual durante los 7 segundos restantes.
+- Ejemplo para Lencería: "Macro shot of delicate black lace fabric resting on a luxurious white velvet surface. Soft studio side-lighting highlighting the intricate stitching and premium textures. Slow cinematic pan. No humans."
+- Ejemplo para Salud/Herramientas: "Sleek metallic product elegantly displayed on a sterile, glossy minimalist table, dramatic lighting."
+Mantén el producto en pantalla SIEMPRE, pero ELIMINA a los humanos del `prompt_veo_visual`.
+
+🚨 REGLA 2: SANITIZACIÓN DE VOCABULARIO (FILTRO DE TEXTO VEO)
+Incluso si la escena no tiene humanos, Vertex AI bloqueará el video si usas palabras "prohibidas" en el `prompt_veo_visual` o `prompt_veo_audio`.
+1. DROGAS/ARMAS/CLÍNICO: Prohibido "lingerie", "underwear", "bra", "panties", "sexy", "pill", "drug", "syringe", "blood", "knife", "weapon", "gun".
+2. PROTECCIÓN AL MENOR (CSAM): PROHIBIDO usar palabras de edad como "young", "kid", "child", "boy", "girl", "teen", "teenager", "youth". Usa siempre "adult" o simplemente omite la edad.
+3. ACCIONES CORPORALES: Prohibido palabras que puedan malinterpretarse como sugerentes ("exhale", "sweat", "moan", "heavy breathing", "naked", "bare").
+DEBES SUSTITUIRLAS POR PALABRAS ABSTRACTAS. Si el cliente vende lencería, usa "elegant garment". Veo no sabe qué es el producto, solo genera lo que lee.
 
 CRÍTICO - RESTRICCIÓN DE TIEMPO EXTENSIÓN (7 SEGUNDOS):
 Tu tarea es generar un JSON con 3 opciones de guiones que continúen coherentemente la historia/acción del video anterior aportando un Cierre y Call to Action (CTA).
