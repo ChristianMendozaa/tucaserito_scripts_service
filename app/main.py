@@ -18,7 +18,7 @@ app = FastAPI(title="Script Generator Microservice", version="1.0.0")
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
-allowed_origins_env = os.getenv("ALLOWED_ORIGINS", '["http://localhost:3000", "https://www.tucaserito.com"]')
+allowed_origins_env = os.getenv("ALLOWED_ORIGINS", '["https://www.tucaserito.com"]')
 try:
     origins = json.loads(allowed_origins_env)
 except Exception:
