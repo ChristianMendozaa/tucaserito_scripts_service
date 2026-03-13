@@ -91,7 +91,7 @@ El request no recibe imágenes. Debe enviar un campo form llamado `data` conteni
 Idéntico al endpoint base, pero enfocado a 7 segundos de continuación y cierre:
 ```json
 {
-  "opciones": [
+  "opciones": [ 
     {
       "id": 1,
       "nombre_estrategia": "OPCION 1 (Oferta Agresiva)",
