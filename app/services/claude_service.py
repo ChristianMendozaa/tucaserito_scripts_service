@@ -1,7 +1,10 @@
 import json
+import logging
 import anthropic
 from app.core.config import settings
 from app.models.schemas import ScriptRequest, ScriptResponse, ScriptExtensionRequest
+
+logger = logging.getLogger(__name__)
 
 # Precios por millón de tokens (en USD) para Claude Haiku 4.5
 COSTO_INPUT_BASE_PER_1M = 1.00
@@ -41,7 +44,7 @@ import base64
 
 def generate_video_scripts(request_data: ScriptRequest, file_contents: list) -> ScriptResponse:
     # Inicializar cliente de Anthropic
-    client = anthropic.Anthropic(api_key=settings.CLAUDE_API_KEY)
+    client = anthropic.Anthropic(api_key=settings.CLAUDE_API_KEY, timeout=15.0)
     
     # Construir system prompt
     system_prompt = '''Eres un Director de Marketing experto para el mercado boliviano.
@@ -131,12 +134,12 @@ Preferencias (si dice "auto", decide por tu cuenta qué sería mejor):
         data = json.loads(response_text)
         return ScriptResponse(**data)
     except json.JSONDecodeError as e:
-        print("Error parsing Claude response JSON:", e)
-        print("Raw response:", response_text)
+        logger.error(f"Error parsing Claude response JSON: {e}")
+        logger.error(f"Raw response (truncated): {response_text[:200]}...")
         raise ValueError("El modelo Claude no devolvió un JSON válido.")
 
 def generate_extension_scripts(request_data: ScriptExtensionRequest) -> ScriptResponse:
-    client = anthropic.Anthropic(api_key=settings.CLAUDE_API_KEY)
+    client = anthropic.Anthropic(api_key=settings.CLAUDE_API_KEY, timeout=15.0)
     
     system_prompt = '''Eres un Director de Marketing experto para el mercado boliviano.
 Tu cliente ha generado un video inicial exitoso y ha solicitado una "EXTENSIÓN" de dicho video.
@@ -211,7 +214,7 @@ Genera las 3 opciones (formato JSON) que continúan esta misma historia durante 
         data = json.loads(response_text)
         return ScriptResponse(**data)
     except json.JSONDecodeError as e:
-        print("Error parsing Claude extension response JSON:", e)
-        print("Raw response:", response_text)
+        logger.error(f"Error parsing Claude extension response JSON: {e}")
+        logger.error(f"Raw response (truncated): {response_text[:200]}...")
         raise ValueError("El modelo Claude no devolvió un JSON válido.")
 
